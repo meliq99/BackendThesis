@@ -1,0 +1,81 @@
+# services:
+#   rabbitmq:
+#     image: rabbitmq:3-management
+#     container_name: rabbitmq
+#     ports:
+#       - "5672:5672"
+#       - "15672:15672"
+#       - "1883:1883"
+#     environment:
+#       RABBITMQ_DEFAULT_USER: guest
+#       RABBITMQ_DEFAULT_PASS: guest
+#     volumes:
+#       - rabbitmq_data:/var/lib/rabbitmq
+#     command: >
+#       rabbitmq-server
+#       --enable_mqtt
+#     healthcheck:
+#       test: ["CMD", "rabbitmqctl", "status"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 5
+
+#   # fastapi:
+#   #   build: .
+#   #   container_name: fastapi
+#   #   depends_on:
+#   #     rabbitmq:
+#   #       condition: service_healthy
+#   #   ports:
+#   #     - "8000:8000"
+#   #   environment:
+#   #     - MQTT_BROKER=rabbitmq
+#   #     - MQTT_PORT=11883
+#   #     - MQTT_TOPIC=fastapi/data
+  
+#   # consumer:
+#   #   build:
+#   #     context: .
+#   #     dockerfile: Dockerfile.consumer
+#   #   depends_on:
+#   #     rabbitmq:
+#   #       condition: service_healthy
+#   #   environment:
+#   #     - MQTT_BROKER=rabbitmq
+#   #     - MQTT_PORT=1883
+#   #     - MQTT_TOPIC=fastapi/data
+#   #   # Opcional: Exponer puertos si es necesario
+#   #   # ports:
+#   #   #   - "9000:9000"
+
+
+# volumes:
+#   rabbitmq_data:
+
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"      
+      - "15672:15672"    
+      - "1883:1883"     
+    environment:
+      RABBITMQ_DEFAULT_USER: mqtt_user
+      RABBITMQ_DEFAULT_PASS: mqtt_password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    command: >
+      rabbitmq-server
+      --enable_mqtt
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  rabbitmq_data:
+
