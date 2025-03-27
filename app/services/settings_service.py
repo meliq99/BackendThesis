@@ -1,6 +1,6 @@
 from models.settings_models import Device
-from repository.settings_repository import create_device
-import uuid
+from repository.settings_repository import create_device, get_devices, get_first_active_simulation
+
 
 
 async def create_device_service(device: Device, session):
@@ -12,5 +12,12 @@ async def create_device_service(device: Device, session):
     return create_device(new_device, session)
 
 
-
+async def get_settings_service(session):
+    devices = get_devices(session)
+    simulation = get_first_active_simulation(session)
+    # new_electric_meter = ElectricMeter(
+    #     name = medidor.name,
+    #     simulation_id = simulation.id,
+    # )
+    return {"devices": devices, "simulation": simulation}
     

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, Depends
-from schemes.settings_schemes import Device, DeviceResponse
+from schemes.settings_schemes import Device, DeviceResponse, Settings
 from typing import Any, Annotated
 from utils.get_db_connection import get_session
 from services import settings_service
@@ -16,3 +16,6 @@ async def create_device(device: Device, session: SessionDependency) -> Any:
     return new_device
     
 
+@router.get("/", status_code=status.HTTP_200_OK, response_model=Settings)
+async def get_settings(session: SessionDependency) -> Any:
+    return await settings_service.get_settings_service(session)

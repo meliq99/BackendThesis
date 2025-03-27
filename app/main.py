@@ -5,7 +5,7 @@ from services.mqtt_service import MQTTService
 from routers import data_router
 from utils.publisher import publish_messages
 from utils.get_db_connection import create_db_and_tables, check_initial_config
-from routers import settings_router
+from routers import settings_router, simulation_router
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -23,6 +23,7 @@ publish_task = None
 async def startup_event():
     create_db_and_tables()
     check_initial_config()
+
 
     global publish_task
     # Start the background publish task
@@ -42,3 +43,4 @@ async def shutdown_event():
     mqtt_service.disconnect()
 
 app.include_router(settings_router.router)
+app.include_router(simulation_router.router)
