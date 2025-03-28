@@ -10,3 +10,4 @@ class Simulation(BaseModel):
     
 class SimulationResponse(Simulation):
     id: UUID
+    electric_meter_id: UUID | None = None
