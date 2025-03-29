@@ -18,6 +18,8 @@ def get_first_active_simulation(session) -> Simulation:
     return session.exec(simulation_statement).first()
 
 def get_electric_meter(session, simulation_id: uuid.UUID) -> ElectricMeter:
-    print(f"Simulation ID: {simulation_id}")
+   
     electric_meter_statement = select(ElectricMeter).where(ElectricMeter.simulation_id == simulation_id)
     return session.exec(electric_meter_statement).first() 
+
+

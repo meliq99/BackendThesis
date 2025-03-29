@@ -15,3 +15,4 @@ SessionDependency = Annotated[Any, Depends(get_session)]
 async def create_simulation(simulation: Simulation, session: SessionDependency) -> Any:
     new_simulation = await create_simulation_service(simulation, session)
     return new_simulation
+
