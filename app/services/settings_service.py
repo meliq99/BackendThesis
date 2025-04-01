@@ -1,7 +1,6 @@
 from models.settings_models import Device
-from repository.settings_repository import create_device, get_devices, get_first_active_simulation, get_electric_meter
-
-
+from repository.settings_repository import create_device, get_devices, get_first_active_simulation
+from repository.electric_meter_repository import get_electric_meter
 
 async def create_device_service(device: Device, session):
     new_device = Device(name=device.name, 
@@ -15,7 +14,7 @@ async def create_device_service(device: Device, session):
 async def get_settings_service(session):
     devices = get_devices(session)
     simulation = get_first_active_simulation(session)
-    electric_meter = get_electric_meter(session, simulation.id)
+    electric_meter = get_electric_meter(simulation.id, session)
     simulation_response = {
         "id": simulation.id,
         "name": simulation.name,

@@ -13,5 +13,5 @@ class DeviceResponse(Device):
     id: UUID
 
 class Settings(BaseModel):
-    devices: list[DeviceResponse] =[]
+    devices: list[DeviceResponse] = []
     simulation: SimulationResponse

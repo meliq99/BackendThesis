@@ -17,9 +17,5 @@ def get_first_active_simulation(session) -> Simulation:
     simulation_statement = select(Simulation).where(Simulation.is_active == True)
     return session.exec(simulation_statement).first()
 
-def get_electric_meter(session, simulation_id: uuid.UUID) -> ElectricMeter:
-   
-    electric_meter_statement = select(ElectricMeter).where(ElectricMeter.simulation_id == simulation_id)
-    return session.exec(electric_meter_statement).first() 
 
 
