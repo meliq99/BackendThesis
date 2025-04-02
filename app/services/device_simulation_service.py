@@ -8,8 +8,11 @@ async def create_device_simulation_service(device_simulation: DeviceSimulationSc
         name= device_simulation.name,
         description= device_simulation.description,
         consumption_value= device_simulation.consumption_value,
-        consumption_algorithm= device_simulation.consumption_algorithm,
         is_default= device_simulation.is_default,
+        peak_consumption=device_simulation.peak_consumption,
+        cycle_duration=device_simulation.cycle_duration,
+        on_duration=device_simulation.on_duration,
+        algorithm_id=device_simulation.algorithm_id,
         electric_meter_id= device_simulation.electric_meter_id
     )
     return create_device_simulation(db_device_simulation, session)
@@ -27,6 +30,9 @@ async def update_device_simulation_service(device_simulation_id: uuid.UUID, devi
         name= device_simulation.name,
         description= device_simulation.description,
         consumption_value= device_simulation.consumption_value,
-        consumption_algorithm= device_simulation.consumption_algorithm
+        peak_consumption=device_simulation.peak_consumption,
+        cycle_duration=device_simulation.cycle_duration,
+        on_duration=device_simulation.on_duration,
+        algorithm_id=device_simulation.algorithm_id,
     )
     return update_device_simulation(device_simulation_id, db_device_simulation, session)    

@@ -1,5 +1,8 @@
 from models.simulation_models import Simulation
 import uuid
+from sqlmodel import Session, select
+from models.simulation_models import ConsumptionAlgorithm
+
 def create_simulation(simulation: Simulation, session):
     session.add(simulation)
     session.commit()
@@ -15,4 +18,10 @@ def desactive_simulation(simulation_id: uuid.UUID,session):
         session.commit()
         session.refresh(simulation)
     return simulation
+
+def get_consumtion_algorithms(session: Session):
+    return session.exec(select(ConsumptionAlgorithm)).all()
     
+def get_consumption_algorithm_by_id(algorithm_id: uuid.UUID, session: Session):
+    statement = select(ConsumptionAlgorithm).where(ConsumptionAlgorithm.id == algorithm_id)
+    return session.exec(statement).first()

@@ -18,6 +18,14 @@ class Simulation(SQLModel, table=True):
     )
     is_active: bool = Field(index=True)
 
+class ConsumptionAlgorithm(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    name: str
+    description: str | None = None
+    algorithm_type: str = Field(index=True)
+    script: str
+
+
 
 
 

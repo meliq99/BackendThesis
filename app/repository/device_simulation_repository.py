@@ -22,7 +22,10 @@ def update_device_simulation(device_simulation_id: uuid.UUID, device_simulation:
     result.name = device_simulation.name
     result.description = device_simulation.description
     result.consumption_value = device_simulation.consumption_value
-    result.consumption_algorithm = device_simulation.consumption_algorithm
+    result.peak_consumption = device_simulation.peak_consumption
+    result.cycle_duration = device_simulation.cycle_duration
+    result.on_duration = device_simulation.on_duration
+    result.algorithm_id = device_simulation.algorithm_id
     session.add(result)
     session.commit()
     session.refresh(result)
