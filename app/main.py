@@ -8,11 +8,31 @@ from routers import settings_router, simulation_router, device_simulation_router
 from utils.get_db_connection import get_session
 from typing import Annotated, Any
 from fastapi import Depends
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 mqtt_service = MQTTService()
 app.include_router(data_router.router)
 

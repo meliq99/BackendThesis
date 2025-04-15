@@ -17,5 +17,8 @@ def get_first_active_simulation(session) -> Simulation:
     simulation_statement = select(Simulation).where(Simulation.is_active == True)
     return session.exec(simulation_statement).first()
 
-
+def delete_device(device_id: uuid.UUID, session) -> None:
+    result = session.exec(select(Device).where(Device.id == device_id)).one()
+    session.delete(result)
+    session.commit()
 

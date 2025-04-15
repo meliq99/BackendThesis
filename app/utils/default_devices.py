@@ -9,3 +9,13 @@ refrigerator: Device = Device(
     cycle_duration=10,
     on_duration=5
 )
+
+# lightbulb: Device = Device(
+#     name="Lightbulb",
+#     description="A standard light bulb that provides illumination in homes and offices.",
+#     consumption_value=0.06,
+#     is_default=True,
+#     peak_consumption=0.08,
+#     cycle_duration=2,
+#     on_duration=10,
+#   )

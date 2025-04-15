@@ -1,6 +1,6 @@
 
 from sqlmodel import  Session, SQLModel, create_engine, text
-from utils.default_devices import refrigerator
+from utils.default_devices import refrigerator, lightbulb
 from utils.default_simulation import default_simulation
 from utils.default_algorithms import cyclic
 
