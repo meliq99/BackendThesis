@@ -48,10 +48,6 @@
 #   #   # ports:
 #   #   #   - "9000:9000"
 
-
-# volumes:
-#   rabbitmq_data:
-
 version: '3.8'
 
 services:
@@ -61,15 +57,17 @@ services:
     ports:
       - "5672:5672"      
       - "15672:15672"    
-      - "1883:1883"     
+      - "1883:1883"
+      - "15675:15675"    # Expose Web MQTT port
     environment:
-      RABBITMQ_DEFAULT_USER: mqtt_user
-      RABBITMQ_DEFAULT_PASS: mqtt_password
+      # Use the default guest credentials.
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     command: >
-      rabbitmq-server
-      --enable_mqtt
+      bash -c "rabbitmq-plugins enable rabbitmq_web_mqtt && rabbitmq-server"
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 5s
@@ -78,4 +76,5 @@ services:
 
 volumes:
   rabbitmq_data:
+
 

@@ -3,19 +3,22 @@ import time
 import paho.mqtt.client as mqtt
 import logging
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)  # Set to DEBUG for detailed logs
+# Configure logging for detailed output
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 class MQTTClient:
-    def __init__(self, host='localhost', port=1883, topic='test/mqtt'):
+    def __init__(self, host='localhost', port=15675, topic='test/mqtt'):
         self.host = host
         self.port = port
         self.topic = topic
-        self.client = mqtt.Client()
-        self.client.username_pw_set("mqtt_user", "mqtt_password")
+        # Use WebSockets transport and set the WebSocket path to /ws
+        self.client = mqtt.Client(transport="websockets")
+        self.client.ws_set_options(path="/ws")
+        # Use guest credentials
+        self.client.username_pw_set("guest", "guest")
         
-        # Enable Paho-MQTT logging
+        # Enable logging for Paho MQTT
         self.client.enable_logger(logger)
         
         # Assign callbacks
@@ -27,13 +30,13 @@ class MQTTClient:
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
-            logger.info("Connected to MQTT Broker")
+            logger.info("Connected to MQTT Broker via WebSockets")
         else:
             logger.error(f"Failed to connect, return code {rc}")
 
     def on_disconnect(self, client, userdata, rc):
         if rc != 0:
-            logger.warning(f"Unexpected disconnection from MQTT Broker. Return code: {rc}")
+            logger.warning(f"Unexpected disconnection. Return code: {rc}")
             self.reconnect()
 
     def connect(self):
@@ -56,12 +59,11 @@ class MQTTClient:
         raise ConnectionError("Failed to connect to MQTT Broker after multiple attempts.")
 
     def reconnect(self):
-        logger.info("Attempting to reconnect to MQTT Broker...")
+        logger.info("Attempting to reconnect...")
         try:
             self.client.reconnect()
         except Exception as e:
             logger.error(f"Reconnection failed: {e}")
-            # Optionally implement further reconnection logic or exit
 
     def publish(self, message):
         if not self.client.is_connected():
@@ -72,8 +74,6 @@ class MQTTClient:
         
         payload = json.dumps(message)
         result = self.client.publish(self.topic, payload)
-        
-        # result: (result, mid)
         status = result[0]
         if status == 0:
             logger.info(f"Sent `{payload}` to topic `{self.topic}`")
