@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException, status
 from typing import Annotated, Any, Dict
 from utils.get_db_connection import get_session
-from utils.publisher import publish_messages
+from utils.publisher import publish_messages, publish_message
 import asyncio
 import logging
 
@@ -35,6 +35,7 @@ async def start_publisher(background_tasks: BackgroundTasks, session: SessionDep
         )
     
     publish_task = asyncio.create_task(publish_messages(mqtt_service, session))
+    await publish_message(mqtt_service, {"subject": "status", "value": "started"})
     logger.info("Background publish task started")
     
     return {"status": "Publisher started"}
@@ -55,5 +56,7 @@ async def stop_publisher() -> Dict[str, str]:
         logger.info("Background publish task cancelled successfully")
     except asyncio.CancelledError:
         logger.info("Background publish task has been cancelled")
+    
+    await publish_message(mqtt_service, {"subject": "status", "value": "stopped"})
     
     return {"status": "Publisher stopped"} 

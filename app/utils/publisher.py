@@ -91,3 +91,8 @@ async def publish_messages(mqtt_service, session, interval: float = 2.0):
         except Exception as e:
             logger.error(f"Error publishing data: {e}")
         await asyncio.sleep(interval)
+
+async def publish_message(mqtt_service, data):
+    mqtt_service.publish(data)
+    logger.info(f"Published data to {data['subject']}: {data['value']}")
+    return data

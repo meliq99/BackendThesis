@@ -40,16 +40,19 @@ app.include_router(data_router.router)
 data_router.mqtt_service = mqtt_service
 publisher_router.mqtt_service = mqtt_service
 
+
 @app.on_event("startup")
 async def startup_event():
     create_db_and_tables()
     check_initial_config()
     logger.info("Application startup complete.")
 
+
 @app.on_event("shutdown")
 async def shutdown_event():
     mqtt_service.disconnect()
     logger.info("Application shutdown complete.")
+
 
 app.include_router(settings_router.router)
 app.include_router(simulation_router.router)
