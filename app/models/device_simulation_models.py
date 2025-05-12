@@ -6,7 +6,8 @@ class DeviceSimulation(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str = Field(index=True)
     description: str | None = None
-    consumption_value: float 
+    consumption_value: float
+    icon:str | None = None
     is_default: bool = Field(index=True)
     peak_consumption: Optional[float] = None
     cycle_duration: Optional[int] = None

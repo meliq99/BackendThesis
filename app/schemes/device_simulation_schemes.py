@@ -5,6 +5,7 @@ class DeviceSimulation(BaseModel):
     name: str
     description: str | None = None
     consumption_value: float
+    icon: str | None = None
     is_default: bool
     peak_consumption: float | None = None
     cycle_duration: int | None = None
