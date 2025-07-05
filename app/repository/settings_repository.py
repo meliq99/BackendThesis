@@ -1,5 +1,5 @@
 from models.settings_models import Device
-from sqlmodel import select
+from sqlmodel import select, Session
 from models.simulation_models import Simulation
 from models.electric_meter_models import ElectricMeter
 import uuid
@@ -22,3 +22,18 @@ def delete_device(device_id: uuid.UUID, session) -> None:
     session.delete(result)
     session.commit()
 
+def update_device(device_id: uuid.UUID, device: Device, session: Session) -> None:
+    result = session.exec(select(Device).where(Device.id == device_id)).one()
+    result.name = device.name
+    result.description = device.description
+    result.consumption_value = device.consumption_value
+    result.icon = device.icon
+    result.is_default = device.is_default
+    result.peak_consumption = device.peak_consumption
+    result.cycle_duration = device.cycle_duration
+    result.on_duration = device.on_duration
+    result.algorithm_id = device.algorithm_id
+    session.add(result)
+    session.commit()
+    session.refresh(result)
+    return result

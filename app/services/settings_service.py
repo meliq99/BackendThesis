@@ -2,7 +2,7 @@ from models.settings_models import Device
 from repository.settings_repository import create_device, get_devices, get_first_active_simulation
 from repository.electric_meter_repository import get_electric_meter
 from repository.simulation_repository import get_consumtion_algorithms
-from repository.settings_repository import delete_device
+from repository.settings_repository import delete_device, update_device
 import uuid
 async def create_device_service(device: Device, session):
     new_device = Device (name=device.name, 
@@ -36,3 +36,16 @@ async def get_settings_service(session):
     }
     return {"devices": devices, "simulation": simulation_response, "consumption_algorithms": consumption_algorithms}
     
+async def update_device_service(device_id: uuid.UUID, device: Device, session) -> None:
+    db_device = Device (
+        name=device.name,
+        description=device.description,
+        consumption_value=device.consumption_value,
+        icon=device.icon,
+        is_default=device.is_default,
+        peak_consumption=device.peak_consumption,
+        cycle_duration=device.cycle_duration,
+        on_duration=device.on_duration,
+        algorithm_id=device.algorithm_id
+    )
+    return update_device(device_id, db_device, session)

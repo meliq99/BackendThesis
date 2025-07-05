@@ -25,4 +25,6 @@ async def get_settings(session: SessionDependency) -> Any:
 async def delete_device(device_id: uuid.UUID, session: SessionDependency) -> Any:
     return await settings_service.delete_device_service(device_id, session)
     
-
+@router.put("/devices/{device_id}", status_code=status.HTTP_200_OK, response_model=DeviceResponse)
+async def update_device(device_id: uuid.UUID, device: Device, session: SessionDependency) -> Any:
+    return await settings_service.update_device_service(device_id, device, session)
