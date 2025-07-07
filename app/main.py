@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from services.mqtt_service import MQTTService
 from routers import data_router
 from utils.get_db_connection import create_db_and_tables, check_initial_config
-from routers import settings_router, simulation_router, device_simulation_router, publisher_router
+from routers import settings_router, simulation_router, device_simulation_router, publisher_router, algorithms_router
 from utils.get_db_connection import get_session
 from typing import Annotated, Any
 from fastapi import Depends
@@ -58,3 +58,4 @@ app.include_router(settings_router.router)
 app.include_router(simulation_router.router)
 app.include_router(device_simulation_router.router)
 app.include_router(publisher_router.router)
+app.include_router(algorithms_router.router)
