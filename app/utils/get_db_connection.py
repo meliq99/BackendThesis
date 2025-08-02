@@ -15,6 +15,40 @@ engine = create_engine(sqlite_url, connect_args=connect_args)
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
+
+def update_existing_simulations(session):
+    """
+    Update existing simulations to have default values for new time/unit properties.
+    This handles migration for databases created before time configuration was added.
+    """
+    try:
+        # Check if any simulation is missing the new properties
+        result = session.exec(text("""
+            SELECT id FROM Simulation 
+            WHERE output_unit IS NULL 
+               OR time_unit IS NULL 
+               OR time_speed IS NULL
+        """)).all()
+        
+        if result:
+            # Update existing simulations with default values
+            session.exec(text("""
+                UPDATE Simulation 
+                SET output_unit = COALESCE(output_unit, 'W'),
+                    time_unit = COALESCE(time_unit, 'seconds'),
+                    time_speed = COALESCE(time_speed, 1.0),
+                    simulation_start_time = COALESCE(simulation_start_time, NULL)
+                WHERE output_unit IS NULL 
+                   OR time_unit IS NULL 
+                   OR time_speed IS NULL
+            """))
+            session.commit()
+            print(f"Updated {len(result)} existing simulations with default time/unit properties")
+    except Exception as e:
+        # If columns don't exist yet (first time setup), this will fail gracefully
+        print(f"Migration check (expected on first run): {e}")
+        pass
+
 def get_session():
     with Session(engine) as session:
         yield session
@@ -25,6 +59,9 @@ def check_initial_config():
         devices_created = session.exec(text("SELECT * FROM Device")).first()
         active_simulation = session.exec(text("SELECT * FROM Simulation WHERE is_active = 1")).first()
         active_electric_meter = session.exec(text("SELECT * FROM ElectricMeter")).first()
+
+        # Check and update existing simulations with missing time/unit properties
+        update_existing_simulations(session)
 
         if default_consumption_algorithms and devices_created and active_simulation and active_electric_meter:
             return True

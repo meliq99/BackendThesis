@@ -9,13 +9,17 @@ async def create_simulation_service(simulation: Simulation, session):
     new_simulation = Simulation(name=simulation.name, 
                                 start_date=simulation.start_date, 
                                 update_date=simulation.update_date, 
-                                is_active=simulation.is_active)
+                                is_active=simulation.is_active,
+                                output_unit=simulation.output_unit,
+                                time_unit=simulation.time_unit,
+                                time_speed=simulation.time_speed,
+                                simulation_start_time=simulation.simulation_start_time)
     current_simulation = get_first_active_simulation(session)
 
     new_simulation_created = create_simulation(new_simulation, session)
 
     if new_simulation_created:
-        new_default_electric_meter = create_electric_meter(ElectricMeter(base_comsumption=0, 
+        new_default_electric_meter = create_electric_meter(ElectricMeter(base_consumption=0, 
                                             simulation_id=new_simulation_created.id), 
                                             session)
         new_simulation_created = {
@@ -24,6 +28,10 @@ async def create_simulation_service(simulation: Simulation, session):
         "start_date": new_simulation_created.start_date,
         "update_date": new_simulation_created.update_date,
         "is_active": new_simulation_created.is_active,
+        "output_unit": new_simulation_created.output_unit,
+        "time_unit": new_simulation_created.time_unit,
+        "time_speed": new_simulation_created.time_speed,
+        "simulation_start_time": new_simulation_created.simulation_start_time,
         "electric_meter_id": new_default_electric_meter.id if new_default_electric_meter else None
     }
 
