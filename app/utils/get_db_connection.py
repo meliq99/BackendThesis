@@ -3,8 +3,8 @@ from sqlmodel import  Session, SQLModel, create_engine, text
 from utils.default_devices import refrigerator,lightbulb, tv,fan, coffeemaker, smartphone,wifi
 from utils.default_simulation import default_simulation
 from utils.default_algorithms import cyclic, active, schedule, vcyclic, cactive, sactive,wactive
-
 from utils.default_electric_meter import default_electric_meter
+from utils.default_ocr import default_ocr_settings
 
 sqlite_file_name = "data.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -59,11 +59,12 @@ def check_initial_config():
         devices_created = session.exec(text("SELECT * FROM Device")).first()
         active_simulation = session.exec(text("SELECT * FROM Simulation WHERE is_active = 1")).first()
         active_electric_meter = session.exec(text("SELECT * FROM ElectricMeter")).first()
+        ocr_settings_created = session.exec(text("SELECT * FROM OCRSettings")).first()
 
         # Check and update existing simulations with missing time/unit properties
         update_existing_simulations(session)
 
-        if default_consumption_algorithms and devices_created and active_simulation and active_electric_meter:
+        if default_consumption_algorithms and devices_created and active_simulation and active_electric_meter and ocr_settings_created:
             return True
         else:
             if not default_consumption_algorithms:
@@ -106,6 +107,9 @@ def check_initial_config():
             if not active_electric_meter:
                 default_electric_meter.simulation_id = default_simulation.id
                 session.add(default_electric_meter)
+
+            if not ocr_settings_created:
+                session.add(default_ocr_settings)
             
             session.commit()
 
