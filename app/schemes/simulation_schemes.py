@@ -17,6 +17,14 @@ class SimulationResponse(Simulation):
     id: UUID
     electric_meter_id: UUID | None = None
 
+class SimulationUpdate(BaseModel):
+    """Schema for updating simulation parameters."""
+    name: Optional[str] = None
+    output_unit: Optional[str] = Field(default=None, description="Unit for frontend display (W, kW, kWh/year, kWh/month)")
+    time_unit: Optional[str] = Field(default=None, description="Time unit for algorithms (seconds, minutes, hours)")
+    time_speed: Optional[float] = Field(default=None, description="Simulation speed multiplier (1.0 = real-time)")
+    simulation_start_time: Optional[datetime] = Field(default=None, description="Custom start time for simulation")
+
 class ConsumptionAlgorithm(BaseModel):
     name: str
     description: str | None = None
