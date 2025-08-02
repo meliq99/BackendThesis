@@ -23,7 +23,36 @@ SessionDependency = Annotated[Any, Depends(get_session)]
 @router.post("/{simulation_id}/start", status_code=status.HTTP_200_OK)
 async def start_publisher(simulation_id: uuid.UUID, background_tasks: BackgroundTasks, session: SessionDependency) -> Dict[str, str]:
     """
-    Start the background publishing task with a proper session.
+    Start the MQTT publisher for real-time data streaming.
+    
+    Initiates background publishing of simulation data to MQTT broker,
+    enabling real-time monitoring and data streaming for the specified simulation.
+    
+    Path Parameters:
+    - **simulation_id**: UUID of the simulation to start publishing for
+    
+    Returns:
+    - Status confirmation and publisher state
+    
+    Example response:
+    ```json
+    {
+        "status": "Publisher started"
+    }
+    ```
+    
+    Behavior:
+    - Starts background task for continuous data publishing
+    - Sends status message to MQTT broker
+    - Updates simulation status to "running"
+    - Enables real-time data streaming
+    
+    Raises:
+    - 500: MQTT service not initialized
+    - 400: Invalid simulation ID
+    
+    📝 **Note**: If publisher is already running, returns current status
+    without starting a new instance.
     """
     global publish_task
     
@@ -46,7 +75,38 @@ async def start_publisher(simulation_id: uuid.UUID, background_tasks: Background
 @router.post("/{simulation_id}/stop", status_code=status.HTTP_200_OK)
 async def stop_publisher(simulation_id: uuid.UUID, session: SessionDependency) -> Dict[str, str]:
     """
-    Stop the background publishing task.
+    Stop the MQTT publisher and halt data streaming.
+    
+    Gracefully stops the background publishing task, ending real-time
+    data streaming for the specified simulation.
+    
+    Path Parameters:
+    - **simulation_id**: UUID of the simulation to stop publishing for
+    
+    Returns:
+    - Status confirmation and final publisher state
+    
+    Example response:
+    ```json
+    {
+        "status": "Publisher stopped"
+    }
+    ```
+    
+    Behavior:
+    - Cancels background publishing task
+    - Sends stop status message to MQTT broker
+    - Updates simulation status to "stopped"
+    - Cleanly terminates data streaming
+    
+    Raises:
+    - 400: Invalid simulation ID
+    
+    📝 **Note**: If publisher is not running, returns current status
+    without attempting to stop a non-existent task.
+    
+    ℹ️ **Safety**: This operation is graceful and ensures proper cleanup
+    of resources and MQTT connections.
     """
     global publish_task
     
