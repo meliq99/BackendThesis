@@ -150,14 +150,24 @@ async def publish_messages(mqtt_service, session, interval: float = 2.0):
             output_unit = current_simulation.output_unit
             consumption_in_output_unit = watts_to_unit(consumption_watts, output_unit)
             
-            data = DataModel(value=consumption_in_output_unit)
+            # Calculate simulation time for timestamp
+            simulation_time = calculate_simulation_time(current_simulation)
+            
+            # Create comprehensive data model with simulation parameters
+            data = DataModel(
+                value=consumption_in_output_unit,
+                unit=output_unit,
+                time_unit=current_simulation.time_unit,
+                time_speed=current_simulation.time_speed,
+                simulation_id=str(current_simulation.id),
+                timestamp=simulation_time
+            )
             mqtt_service.publish(data.dict())
             
             # Enhanced logging with time information
-            simulation_time = calculate_simulation_time(current_simulation)
-            logger.info(f"Published data: {data} (unit: {output_unit}, time_unit: {current_simulation.time_unit}, "
-                       f"time_speed: {current_simulation.time_speed}x, sim_time: {simulation_time}, "
-                       f"simulation_id: {current_simulation.id})")
+            logger.info(f"Published data: {consumption_in_output_unit} {output_unit} "
+                       f"(time_unit: {current_simulation.time_unit}, time_speed: {current_simulation.time_speed}x, "
+                       f"sim_time: {simulation_time}, simulation_id: {current_simulation.id})")
         except Exception as e:
             logger.error(f"Error publishing data: {e}")
         await asyncio.sleep(interval)
